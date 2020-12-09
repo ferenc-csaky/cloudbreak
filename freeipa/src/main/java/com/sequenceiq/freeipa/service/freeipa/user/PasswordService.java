@@ -93,7 +93,7 @@ public class PasswordService {
     private Operation setPasswordForStacks(String accountId, String actorCrn, String userCrn, String password,
             Set<String> environmentCrnFilter, List<Stack> stacks) {
         Operation operation = operationService.startOperation(accountId, OperationType.SET_PASSWORD,
-                environmentCrnFilter, List.of(userCrn));
+                environmentCrnFilter, userCrn);
         if (operation.getStatus() == OperationState.RUNNING) {
             asyncSetPasswords(operation.getOperationId(), accountId, actorCrn, userCrn, password, stacks);
         }
