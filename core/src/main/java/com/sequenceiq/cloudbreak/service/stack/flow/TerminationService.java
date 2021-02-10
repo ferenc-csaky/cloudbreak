@@ -97,6 +97,12 @@ public class TerminationService {
         }
     }
 
+    public void finalizeRecoveryTeardown(Long stackId) {
+        Stack stack = stackService.getByIdWithListsInTransaction(stackId);
+        cleanupFreeIpa(stack);
+        terminateMetaDataInstances(stack);
+    }
+
     private void cleanupFreeIpa(Stack stack) {
         try {
             freeIpaCleanupService.cleanupButIp(stack);

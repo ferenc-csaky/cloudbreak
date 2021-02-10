@@ -20,8 +20,10 @@ public class CcmKeyDeregisterAction extends AbstractStackTerminationAction<Clust
 
     @Override
     protected void doExecute(StackTerminationContext context, ClusterProxyDeregisterSuccess payload, Map<Object, Object> variables) {
-        CcmKeyDeregisterRequest deregisterRequest = createRequest(context);
-        sendEvent(context, deregisterRequest.selector(), deregisterRequest);
+        if(!context.getTerminationType().isRecovery()) {
+            CcmKeyDeregisterRequest deregisterRequest = createRequest(context);
+            sendEvent(context, deregisterRequest.selector(), deregisterRequest);
+        }
     }
 
     @Override

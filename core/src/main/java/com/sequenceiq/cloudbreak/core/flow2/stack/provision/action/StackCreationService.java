@@ -292,10 +292,8 @@ public class StackCreationService {
     }
 
     private void validateResourceResults(CloudContext cloudContext, LaunchStackResult res) {
-        validateResourceResults(cloudContext, res.getErrorDetails(), res.getResults());
-    }
-
-    private void validateResourceResults(CloudContext cloudContext, Exception exception, List<CloudResourceStatus> results) {
+        Exception exception = res.getErrorDetails();
+        List<CloudResourceStatus> results = res.getResults();
         String action = "create";
         if (exception != null) {
             LOGGER.info(format("Failed to %s stack: %s", action, cloudContext), exception);

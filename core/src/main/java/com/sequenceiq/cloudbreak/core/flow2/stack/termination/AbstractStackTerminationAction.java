@@ -24,6 +24,7 @@ import com.sequenceiq.cloudbreak.core.flow2.AbstractStackAction;
 import com.sequenceiq.cloudbreak.domain.stack.Stack;
 import com.sequenceiq.cloudbreak.logger.MDCBuilder;
 import com.sequenceiq.cloudbreak.reactor.api.event.StackFailureEvent;
+import com.sequenceiq.cloudbreak.reactor.api.event.stack.TerminationType;
 import com.sequenceiq.cloudbreak.service.resource.ResourceService;
 import com.sequenceiq.cloudbreak.service.stack.StackService;
 import com.sequenceiq.cloudbreak.util.StackUtil;
@@ -77,11 +78,12 @@ abstract class AbstractStackTerminationAction<P extends Payload>
 
     protected StackTerminationContext createStackTerminationContext(FlowParameters flowParameters, Stack stack, CloudContext cloudContext,
             CloudCredential cloudCredential, CloudStack cloudStack, List<CloudResource> resources, P payload) {
-        return new StackTerminationContext(flowParameters, stack, cloudContext, cloudCredential, cloudStack, resources, false);
+        return new StackTerminationContext(flowParameters, stack, cloudContext, cloudCredential, cloudStack, resources, TerminationType.REGULAR);
     }
 
     @Override
     protected Object getFailurePayload(P payload, Optional<StackTerminationContext> flowContext, Exception ex) {
+//        return new StackTerminationFailureEvent(payload.getResourceId(), ex, flowContext.get().getTerminationType());
         return new StackFailureEvent(payload.getResourceId(), ex);
     }
 }

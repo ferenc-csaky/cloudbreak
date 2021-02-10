@@ -1,6 +1,7 @@
 package com.sequenceiq.datalake.flow;
 
 import static com.sequenceiq.datalake.flow.create.SdxCreateEvent.STORAGE_VALIDATION_WAIT_EVENT;
+import static com.sequenceiq.datalake.flow.datalake.recovery.DatalakeUpgradeRecoveryEvent.DATALAKE_RECOVERY_EVENT;
 import static com.sequenceiq.datalake.flow.datalake.upgrade.DatalakeUpgradeEvent.DATALAKE_UPGRADE_EVENT;
 import static com.sequenceiq.datalake.flow.delete.SdxDeleteEvent.SDX_DELETE_EVENT;
 import static com.sequenceiq.datalake.flow.diagnostics.SdxCmDiagnosticsEvent.SDX_CM_DIAGNOSTICS_COLLECTION_EVENT;
@@ -17,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import com.sequenceiq.datalake.flow.dr.backup.event.DatalakeTriggerBackupEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,11 +29,13 @@ import com.sequenceiq.cloudbreak.exception.FlowNotAcceptedException;
 import com.sequenceiq.cloudbreak.exception.FlowsAlreadyRunningException;
 import com.sequenceiq.datalake.entity.SdxCluster;
 import com.sequenceiq.datalake.flow.cert.rotation.event.SdxStartCertRotationEvent;
+import com.sequenceiq.datalake.flow.datalake.recovery.event.DatalakeRecoveryStartEvent;
 import com.sequenceiq.datalake.flow.datalake.upgrade.event.DatalakeUpgradeStartEvent;
 import com.sequenceiq.datalake.flow.delete.event.SdxDeleteStartEvent;
 import com.sequenceiq.datalake.flow.diagnostics.event.SdxCmDiagnosticsCollectionEvent;
 import com.sequenceiq.datalake.flow.diagnostics.event.SdxDiagnosticsCollectionEvent;
 import com.sequenceiq.datalake.flow.dr.backup.event.DatalakeDatabaseBackupStartEvent;
+import com.sequenceiq.datalake.flow.dr.backup.event.DatalakeTriggerBackupEvent;
 import com.sequenceiq.datalake.flow.dr.restore.event.DatalakeDatabaseRestoreStartEvent;
 import com.sequenceiq.datalake.flow.repair.event.SdxRepairStartEvent;
 import com.sequenceiq.datalake.flow.start.event.SdxStartStartEvent;
@@ -44,6 +46,7 @@ import com.sequenceiq.flow.api.model.FlowType;
 import com.sequenceiq.flow.core.FlowConstants;
 import com.sequenceiq.flow.core.model.FlowAcceptResult;
 import com.sequenceiq.flow.reactor.ErrorHandlerAwareReactorEventFactory;
+import com.sequenceiq.sdx.api.model.SdxRecoveryType;
 import com.sequenceiq.sdx.api.model.SdxRepairRequest;
 import com.sequenceiq.sdx.api.model.SdxUpgradeReplaceVms;
 
@@ -91,6 +94,13 @@ public class SdxReactorFlowManager {
         String userId = ThreadBasedUserCrnProvider.getUserCrn();
         return notify(selector, new DatalakeUpgradeStartEvent(selector, cluster.getId(),
                 userId, imageId, replaceVms.getBooleanValue()));
+    }
+
+    public FlowIdentifier triggerDatalakeRuntimeUpgradeRecoveryFlow(SdxCluster cluster, SdxRecoveryType recoveryType) {
+        LOGGER.info("Trigger recovery of failed runtime upgrade for: {} with recovery type: {}", cluster, recoveryType);
+        String selector = DATALAKE_RECOVERY_EVENT.event();
+        String userId = ThreadBasedUserCrnProvider.getUserCrn();
+        return notify(selector, new DatalakeRecoveryStartEvent(selector, cluster.getId(), userId, recoveryType));
     }
 
     public FlowIdentifier triggerSdxStartFlow(SdxCluster cluster) {

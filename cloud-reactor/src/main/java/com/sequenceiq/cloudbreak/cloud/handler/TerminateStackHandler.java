@@ -31,6 +31,7 @@ import reactor.bus.EventBus;
 
 @Component
 public class TerminateStackHandler implements CloudPlatformEventHandler<TerminateStackRequest> {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TerminateStackHandler.class);
 
     @Inject
@@ -60,6 +61,7 @@ public class TerminateStackHandler implements CloudPlatformEventHandler<Terminat
             List<CloudResourceStatus> resourceStatus = connector.resources().terminate(ac, request.getCloudStack(), request.getCloudResources());
             List<CloudResource> resources = ResourceLists.transform(resourceStatus);
             TerminateStackResult result;
+//            result = new RecoveryTerminateStackResult(request.getResourceId());
             if (!resources.isEmpty()) {
                 PollTask<ResourcesStatePollerResult> task = statusCheckFactory.newPollResourcesStateTask(ac, resources, false);
                 ResourcesStatePollerResult statePollerResult = ResourcesStatePollerResults.build(request.getCloudContext(), resourceStatus);

@@ -346,7 +346,7 @@ public class StackCreatorServiceTest {
         InstanceGroup computeGroup = getARequestGroup("compute", 4, InstanceGroupType.CORE);
         stack.setInstanceGroups(Set.of(masterGroup, workerGroup, computeGroup));
 
-        underTest.fillInstanceMetadata(stack);
+        underTest.prepareInstanceMetadata(stack);
 
         Map<String, Set<InstanceMetaData>> hostGroupInstances = stack.getInstanceGroups().stream().collect(
                 Collectors.toMap(InstanceGroup::getGroupName, instanceGroup -> instanceGroup.getAllInstanceMetaData()));
@@ -370,7 +370,7 @@ public class StackCreatorServiceTest {
         InstanceGroup masterGroup = getARequestGroup("master", 2, InstanceGroupType.CORE);
         stack.setInstanceGroups(Set.of(masterGroup, workerGroup, computeGroup, managerGroup, gatewayGroup));
 
-        underTest.fillInstanceMetadata(stack);
+        underTest.prepareInstanceMetadata(stack);
 
         Map<String, Set<InstanceMetaData>> hostGroupInstances = stack.getInstanceGroups().stream().collect(
         Collectors.toMap(InstanceGroup::getGroupName, instanceGroup -> instanceGroup.getAllInstanceMetaData()));

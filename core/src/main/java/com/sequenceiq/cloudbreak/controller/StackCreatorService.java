@@ -238,7 +238,7 @@ public class StackCreatorService {
                             "Validate cluster rds and autotls took {} ms");
                 }
 
-                measure(() -> fillInstanceMetadata(stack),
+                measure(() -> prepareInstanceMetadata(stack),
                         LOGGER,
                         "Fill up instance metadata took {} ms");
 
@@ -256,7 +256,7 @@ public class StackCreatorService {
                 try {
                     LOGGER.info("Create cluster entity in the database with name {}.", stackName);
                     long clusterSaveStart = System.currentTimeMillis();
-                    createClusterIfNeed(user, stackRequest, newStack, stackName, blueprint, environment.getParentEnvironmentCloudPlatform());
+                    createClusterIfNeeded(user, stackRequest, newStack, stackName, blueprint, environment.getParentEnvironmentCloudPlatform());
                     LOGGER.info("Cluster save took {} ms", System.currentTimeMillis() - clusterSaveStart);
                 } catch (CloudbreakImageCatalogException | IOException | TransactionExecutionException e) {
                     throw new RuntimeException(e.getMessage(), e);
@@ -267,7 +267,7 @@ public class StackCreatorService {
                     idBrokerService.save(idBroker);
                 }, LOGGER, "Generate id broker sign keys and save");
 
-                Stack withSharedServicesIfNeeded = measure(() -> prepareSharedServiceIfNeed(newStack),
+                Stack withSharedServicesIfNeeded = measure(() -> prepareSharedServiceIfNeeded(newStack),
                         LOGGER,
                         "Shared service preparation if required took {} ms with name {}.", stackName);
                 measure(() -> assignOwnerRoleOnDataHub(user, stackRequest, newStack),
@@ -370,7 +370,7 @@ public class StackCreatorService {
         }
     }
 
-    void fillInstanceMetadata(Stack stack) {
+    public void prepareInstanceMetadata(Stack stack) {
         long privateIdNumber = 0;
         //Gateway HostGroups are sorted first to start with privateIdNumber 0.
         List<InstanceGroup> sortedInstanceGroups = stack.getInstanceGroups().stream()
@@ -384,7 +384,7 @@ public class StackCreatorService {
         }
     }
 
-    private Stack prepareSharedServiceIfNeed(Stack stack) {
+    private Stack prepareSharedServiceIfNeeded(Stack stack) {
         if (stack.getDatalakeResourceId() != null) {
             return sharedServiceConfigProvider.prepareDatalakeConfigs(stack);
         }
@@ -392,7 +392,7 @@ public class StackCreatorService {
         return stack;
     }
 
-    private void createClusterIfNeed(User user, StackV4Request stackRequest, Stack stack, String stackName,
+    private void createClusterIfNeeded(User user, StackV4Request stackRequest, Stack stack, String stackName,
             Blueprint blueprint, String parentEnvironmentCloudPlatform) throws CloudbreakImageCatalogException, IOException, TransactionExecutionException {
         if (stackRequest.getCluster() != null) {
             long start = System.currentTimeMillis();
