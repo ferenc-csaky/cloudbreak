@@ -99,8 +99,19 @@ altus:
     enabled: true
     endpoint: localhost:8982
 
+cdp:
+  platforms:
+    supportedPlatforms: AWS,AZURE,GCP
+    experimentalPlatforms: YARN,MOCK
+    supportedFeature:
+      externalDatabase: AWS,AZURE,GCP,MOCK
+      freeIpaProvision: AWS,AZURE,GCP,MOCK
+      stopDatabase: AWS,GCP
+      sslEnforcement: AWS,AZURE
+      parentPlatforms: AWS,MOCK
+      childPlatforms: YARN,MOCK
+
 cb:
-  enabledplatforms: AZURE,AWS,GCP,OPENSTACK
   platform.default.rootVolumeSize:
     AWS: 100
     AZURE: 100

@@ -1,13 +1,11 @@
 package com.sequenceiq.cloudbreak.conf;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -28,49 +26,17 @@ public class ExternalDatabaseConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExternalDatabaseConfig.class);
 
-    @Value("${cb.externaldatabase.supported.platform:AWS,GCP}")
+    @Value("${cdp.platforms.supportedFeature.externalDatabase}")
     private Set<CloudPlatform> dbServiceSupportedPlatforms;
 
-    @Value("${cb.externaldatabase.experimental.platform:AZURE,MOCK}")
-    private Set<CloudPlatform> dbServiceExperimentalPlatforms;
-
-    @Value("${cb.externaldatabase.pause.supported.platform:AWS,GCP}")
+    @Value("${cdp.platforms.supportedFeature.stopDatabase}")
     private Set<CloudPlatform> dbServicePauseSupportedPlatforms;
 
     @Inject
     private Set<DatabaseServerParameterDecorator> databaseServerParameterDecorators;
 
-    private Set<CloudPlatform> allPossibleExternalDbPlatforms;
-
-    public boolean isExternalDatabaseSupportedFor(CloudPlatform cloudPlatform) {
-        return dbServiceSupportedPlatforms.contains(cloudPlatform);
-    }
-
     public boolean isExternalDatabasePauseSupportedFor(CloudPlatform cloudPlatform) {
         return dbServicePauseSupportedPlatforms.contains(cloudPlatform);
-    }
-
-    public Set<CloudPlatform> getSupportedExternalDatabasePlatforms() {
-        return dbServiceSupportedPlatforms;
-    }
-
-    public Set<CloudPlatform> getPauseSupportedExternalDatabasePlatforms() {
-        return dbServicePauseSupportedPlatforms;
-    }
-
-    public Set<CloudPlatform> getAllPossibleExternalDbPlatforms() {
-        return allPossibleExternalDbPlatforms;
-    }
-
-    public boolean isExternalDatabaseSupportedOrExperimental(CloudPlatform cloudPlatform) {
-        return allPossibleExternalDbPlatforms.contains(cloudPlatform);
-    }
-
-    @PostConstruct
-    public void createAllPossibleDatabasePlatform() {
-        allPossibleExternalDbPlatforms = new HashSet<>();
-        allPossibleExternalDbPlatforms.addAll(dbServiceSupportedPlatforms);
-        allPossibleExternalDbPlatforms.addAll(dbServiceExperimentalPlatforms);
     }
 
     @Bean
@@ -86,7 +52,7 @@ public class ExternalDatabaseConfig {
     public Map<CloudPlatform, DatabaseStackConfig> databaseConfigs() throws IOException {
         ImmutableMap.Builder<CloudPlatform, DatabaseStackConfig> builder = new ImmutableMap.Builder<>();
 
-        for (CloudPlatform cloudPlatform : allPossibleExternalDbPlatforms) {
+        for (CloudPlatform cloudPlatform : dbServiceSupportedPlatforms) {
             Optional<DatabaseStackConfig> dbConfig = readDatabaseStackConfigResource(cloudPlatform);
             if (dbConfig.isPresent()) {
                 builder.put(cloudPlatform, dbConfig.get());
