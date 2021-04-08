@@ -1,5 +1,6 @@
 package com.sequenceiq.cloudbreak.cloud.azure.client;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ import com.microsoft.azure.AzureEnvironment;
 import com.microsoft.azure.credentials.ApplicationTokenCredentials;
 import com.microsoft.azure.credentials.AzureTokenCredentials;
 import com.microsoft.azure.management.Azure;
+import com.microsoft.azure.management.marketplaceordering.v2015_06_01.implementation.MarketplaceOrderingManager;
 import com.microsoft.azure.management.privatedns.v2018_09_01.implementation.privatednsManager;
 import com.microsoft.rest.LogLevel;
 import com.sequenceiq.cloudbreak.cloud.azure.tracing.AzureOkHttp3TracingInterceptor;
@@ -58,6 +60,10 @@ public class AzureClientCredentials {
 
     public privatednsManager getPrivateDnsManager() {
         return privatednsManager.authenticate(azureClientCredentials, credentialView.getSubscriptionId());
+    }
+
+    public MarketplaceOrderingManager getMarketplaceOrderingManager() {
+        return MarketplaceOrderingManager.authenticate(azureClientCredentials, credentialView.getSubscriptionId());
     }
 
     private AzureTokenCredentials getAzureCredentials() {
@@ -115,5 +121,14 @@ public class AzureClientCredentials {
             }
         }
         return Optional.ofNullable(refreshToken);
+    }
+
+    public Optional<String> getAccesToken() {
+        try {
+            return Optional.of(azureClientCredentials.getToken("https://management.core.windows.net/"));
+        } catch (IOException e) {
+            LOGGER.warn("Could not get access token.");
+            return Optional.empty();
+        }
     }
 }
