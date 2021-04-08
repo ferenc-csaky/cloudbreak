@@ -38,7 +38,7 @@ public class ImageEntryV4Request {
     private String imageType;
 
     @ApiModelProperty(value = ModelDescriptions.ImageModelDescription.VMS_TO_REGIONS)
-    private Map<String, Object> vmsToRegions = new HashMap<>();
+    private Map<String, String> vmsToRegions = new HashMap<>();
 
     public String getId() {
         return id;
@@ -72,11 +72,11 @@ public class ImageEntryV4Request {
         this.imageType = imageType;
     }
 
-    public Map<String, Object> getVmsToRegions() {
+    public Map<String, String> getVmsToRegions() {
         return vmsToRegions;
     }
 
-    public void setVmsToRegions(Map<String, Object> vmsToRegions) {
+    public void setVmsToRegions(Map<String, String> vmsToRegions) {
         this.vmsToRegions = vmsToRegions;
     }
 }
