@@ -86,10 +86,18 @@ public class StructuredEventToCDPOperationDetailsConverterTest {
     public void testFinalProcessingType() {
         StructuredFlowEvent structuredFlowEvent = new StructuredFlowEvent();
         FlowDetails flowDetails = new FlowDetails();
-        flowDetails.setNextFlowState("FINAL_STATE");
+        flowDetails.setFlowState("unknown");
+        flowDetails.setNextFlowState("CLUSTER_CREATION_FAILED_STATE");
         structuredFlowEvent.setFlow(flowDetails);
 
         UsageProto.CDPOperationDetails details = underTest.convert(structuredFlowEvent);
+
+        Assert.assertEquals(UsageProto.CDPRequestProcessingStep.Value.FINAL, details.getCdpRequestProcessingStep());
+        Assert.assertEquals("", details.getFlowState());
+
+        flowDetails.setNextFlowState("CLUSTER_CREATION_FINISHED_STATE");
+
+        details = underTest.convert(structuredFlowEvent);
 
         Assert.assertEquals(UsageProto.CDPRequestProcessingStep.Value.FINAL, details.getCdpRequestProcessingStep());
         Assert.assertEquals("", details.getFlowState());
@@ -113,7 +121,7 @@ public class StructuredEventToCDPOperationDetailsConverterTest {
         FlowDetails flowDetails = new FlowDetails();
         flowDetails.setFlowId("flowId");
         flowDetails.setFlowChainId("flowChainId");
-        flowDetails.setNextFlowState("FINAL_STATE");
+        flowDetails.setNextFlowState("CLUSTER_CREATION_FINISHED_STATE");
         structuredFlowEvent.setFlow(flowDetails);
 
         OperationDetails operationDetails = new OperationDetails();
@@ -134,7 +142,7 @@ public class StructuredEventToCDPOperationDetailsConverterTest {
         FlowDetails flowDetails = new FlowDetails();
         flowDetails.setFlowId("flowId");
         flowDetails.setFlowState("SOMETHING");
-        flowDetails.setNextFlowState("FINAL_STATE");
+        flowDetails.setNextFlowState("CLUSTER_CREATION_FINISHED_STATE");
         structuredFlowEvent.setFlow(flowDetails);
 
         UsageProto.CDPOperationDetails details = underTest.convert(structuredFlowEvent);

@@ -65,10 +65,18 @@ class CDPStructuredFlowEventToCDPOperationDetailsConverterTest {
     public void testFinalProcessingType() {
         CDPEnvironmentStructuredFlowEvent cdpStructuredFlowEvent = new CDPEnvironmentStructuredFlowEvent();
         FlowDetails flowDetails = new FlowDetails();
-        flowDetails.setNextFlowState("FINAL_STATE");
+        flowDetails.setFlowState("unknown");
+        flowDetails.setNextFlowState("ENV_CREATION_FAILED_STATE");
         cdpStructuredFlowEvent.setFlow(flowDetails);
 
         UsageProto.CDPOperationDetails details = underTest.convert(cdpStructuredFlowEvent);
+
+        Assert.assertEquals(UsageProto.CDPRequestProcessingStep.Value.FINAL, details.getCdpRequestProcessingStep());
+        Assert.assertEquals("", details.getFlowState());
+
+        flowDetails.setNextFlowState("ENV_CREATION_FINISHED_STATE");
+
+        details = underTest.convert(cdpStructuredFlowEvent);
 
         Assert.assertEquals(UsageProto.CDPRequestProcessingStep.Value.FINAL, details.getCdpRequestProcessingStep());
         Assert.assertEquals("", details.getFlowState());
@@ -92,7 +100,7 @@ class CDPStructuredFlowEventToCDPOperationDetailsConverterTest {
         FlowDetails flowDetails = new FlowDetails();
         flowDetails.setFlowId("flowId");
         flowDetails.setFlowChainId("flowChainId");
-        flowDetails.setNextFlowState("FINAL_STATE");
+        flowDetails.setNextFlowState("ENV_CREATION_FINISHED_STATE");
         cdpStructuredFlowEvent.setFlow(flowDetails);
 
         CDPOperationDetails operationDetails = new CDPOperationDetails();
@@ -113,7 +121,7 @@ class CDPStructuredFlowEventToCDPOperationDetailsConverterTest {
         FlowDetails flowDetails = new FlowDetails();
         flowDetails.setFlowId("flowId");
         flowDetails.setFlowState("SOMETHING");
-        flowDetails.setNextFlowState("FINAL_STATE");
+        flowDetails.setNextFlowState("ENV_CREATION_FINISHED_STATE");
         cdpStructuredFlowEvent.setFlow(flowDetails);
 
         UsageProto.CDPOperationDetails details = underTest.convert(cdpStructuredFlowEvent);
