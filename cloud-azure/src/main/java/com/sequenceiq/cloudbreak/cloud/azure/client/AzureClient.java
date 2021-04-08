@@ -677,7 +677,6 @@ public class AzureClient {
      * @return IP addresses
      */
     public List<String> getLoadBalancerIps(String resourceGroupName, String loadBalancerName) {
-        // todo: test this
         List<String> idsAssociatedWithLoadBalancerPublicIps = getLoadBalancer(resourceGroupName, loadBalancerName).publicIPAddressIds();
         List<PublicIPAddress> publicIpAddressesInResourceGroup = getPublicIpAddresses(resourceGroupName);
 
