@@ -178,7 +178,7 @@ public class AzureMetadataCollector implements MetadataCollector {
                     LOGGER.warn("Unable to find metadata for load balancer {}.", loadBalancerName);
                 }
             } catch (RuntimeException e) {
-                LOGGER.debug("Unable to find metadata for load balancer " + loadBalancerName, e);
+                LOGGER.warn("Unable to find metadata for load balancer " + loadBalancerName, e);
             }
         }
 
