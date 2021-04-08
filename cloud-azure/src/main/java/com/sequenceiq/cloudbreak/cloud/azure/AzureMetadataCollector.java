@@ -149,6 +149,9 @@ public class AzureMetadataCollector implements MetadataCollector {
                     if (publicIps.isEmpty()) {
                         LOGGER.warn("Unable to find public ip address for load balancer {}", loadBalancerName);
                     } else {
+                        if (publicIps.size() > 1) {
+                            LOGGER.warn("Multiple public IPs found for load balancer {}, only one will be used. The selection of which is not well defined", loadBalancerName);
+                        }
                         ip = publicIps.get(0);
                     }
                 } else if (LoadBalancerType.PRIVATE.equals(type)) {
@@ -156,6 +159,9 @@ public class AzureMetadataCollector implements MetadataCollector {
                     if (privateIps.isEmpty()) {
                         LOGGER.warn("Unable to find private ip address for load balancer {}", loadBalancerName);
                     } else {
+                        if (privateIps.size() > 1) {
+                            LOGGER.warn("Multiple private IPs found for load balancer {}, only one will be used. The selection of which is not well defined", loadBalancerName);
+                        }
                         ip = privateIps.get(0);
                     }
                 }
