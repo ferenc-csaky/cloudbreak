@@ -167,7 +167,8 @@ public class Crn {
         DE("de", NON_ADMIN_SERVICE),
         ACCOUNTTAG("accounttag", NON_ADMIN_SERVICE),
         ACCOUNTTELEMETRY("accounttelemetry", NON_ADMIN_SERVICE),
-        ML("ml", NON_ADMIN_SERVICE);
+        ML("ml", NON_ADMIN_SERVICE),
+        DF("df", NON_ADMIN_SERVICE);
 
         private static final ImmutableMap<String, Service> FROM_STRING;
 
